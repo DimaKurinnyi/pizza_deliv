@@ -23,8 +23,8 @@ export const CheckboxFilterGroup: React.FC<Props> = ({
   limit = 5,
   searchInputPlaceholder = 'Search...',
   className,
-  onChange,
-  defaultValue,
+  // onChange,
+  // defaultValue,
 }) => {
   const [showAll, setShowAll] = useState(false);
   const [searchInputValue, setSearchInputValue] = useState('');
@@ -39,6 +39,7 @@ export const CheckboxFilterGroup: React.FC<Props> = ({
   return (
     <div className={className}>
       <p className="font-bolt mb-3">{title}</p>
+      {/* //поиск по фильтру */}
       {showAll && (
         <div className="mb-5">
           <Input
