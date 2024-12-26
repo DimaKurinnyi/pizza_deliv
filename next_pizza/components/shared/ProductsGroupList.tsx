@@ -2,13 +2,14 @@
 
 import React, { useEffect, useRef } from 'react';
 import { Title } from './title';
-import {useIntersection} from 'react-use'
+import {useIntersection} from 'react-use' //для скрола по категориям
 import { cn } from '@/lib/utils';
 import { ProductCard } from './ProductCard';
 import { useCategoryStore } from '@/store/category';
 
 interface Props {
   title: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   items: any[];
   categoryId: number;
   className?: string;
