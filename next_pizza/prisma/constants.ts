@@ -11,7 +11,7 @@ export const categories = [
 
 export const ingredients = [
   {
-    name: 'Сырный бортик',
+    name: 'Cheese border',
     price: 179,
     imageUrl:
       'https://cdn.dodostatic.net/static/Img/Ingredients/99f5cb91225b4875bd06a26d2e842106.png',
@@ -149,7 +149,7 @@ export const products = [
         categoryId: 3,
       },
       {
-        name: 'Банановый молочный коктейль',
+        name: 'Banana Milk shake',
         imageUrl: 'https://media.dodostatic.net/image/r:292x292/11EEE20B8772A72A9B60CFB20012C185.webp',
         categoryId: 4,
       },

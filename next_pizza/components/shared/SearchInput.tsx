@@ -4,8 +4,8 @@ import { Api } from '@/services/appi-client';
 import { Product } from '@prisma/client';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
-import { useClickAway } from 'react-use';
+import React, { useRef, useState } from 'react';
+import { useClickAway, useDebounce } from 'react-use';
 interface Props {
   className?: string;
 }
@@ -21,11 +21,18 @@ export const SearchInput: React.FC<Props> = ({ className }) => {
     setFocused(false);
   });
 
-  useEffect(() => {
-    Api.products.search(searchQuery).then((item) => {
-      setProducts(item);
-    });
-  }, [searchQuery]);
+  useDebounce(
+    async () => {
+      try {
+        const response = await Api.products.search(searchQuery);
+        setProducts(response);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    250,
+    [searchQuery],
+  );
 
   const onClickItem = () => {
     setFocused(false);
