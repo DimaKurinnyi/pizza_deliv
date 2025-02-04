@@ -1,12 +1,23 @@
 import { Container, Filters, ProductsGroupList, Title, TopBar } from '@/components/shared';
+import { prisma } from '@/prisma/prisma-client';
 
-export default function Home() {
+export default async function Home() {
+  const category = await prisma.category.findMany({
+    include: {
+      products: {
+        include: {
+          items: true,
+          ingredients: true,
+        },
+      },
+    },
+  });
   return (
     <>
       <Container className="mt-10">
         <Title text="All pizzas" size="lg" className="font-extrabold" />
       </Container>
-      <TopBar />
+      <TopBar categories={category.filter((cat) => cat.products.length > 0)}/>
       <Container className="pb-14 mt-10">
         <div className="flex gap-[60px]">
           {/* filter */}
@@ -16,42 +27,12 @@ export default function Home() {
           {/* Pizza cards */}
           <div className="flex-1">
             <div className="flex flex-col gap-16">
-              <ProductsGroupList
-                title="Pizzas"
-                items={[
-                  {
-                    id: '1',
-                    name: 'Margherita',
-                    imageUrl: 'https://media.dodostatic.net/image/r:233x233/11EE7D612FC7B7FCA5BE822752BEE1E5.avif',
-                    items: [{ price: 10.99 }],
-                  },
-                  {
-                    id: '1',
-                    name: 'Margherita',
-                    imageUrl: 'https://media.dodostatic.net/image/r:233x233/11EE7D612FC7B7FCA5BE822752BEE1E5.avif',
-                    items: [{ price: 10.99 }],
-                  },
-                ]}
-                categoryId={1}
-              />
-              <ProductsGroupList
-                title="Soup"
-                items={[
-                  {
-                    id: '1',
-                    name: 'Margherita',
-                    imageUrl: 'https://media.dodostatic.net/image/r:233x233/11EE7D612FC7B7FCA5BE822752BEE1E5.avif',
-                    items: [{ price: 10.99 }],
-                  },
-                  {
-                    id: '1',
-                    name: 'Margherita',
-                    imageUrl: 'https://media.dodostatic.net/image/r:233x233/11EE7D612FC7B7FCA5BE822752BEE1E5.avif',
-                    items: [{ price: 10.99 }],
-                  },
-                ]}
-                categoryId={2}
-              />
+              {category.map(
+                (category) =>
+                  category.products.length > 0 && (
+                    <ProductsGroupList key={category.id} title={category.name} categoryId={category.id} items={category.products} />
+                  ),
+              )}
             </div>
           </div>
         </div>
