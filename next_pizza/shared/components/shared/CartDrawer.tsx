@@ -36,7 +36,8 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ className
               <CartDrawerItem id={0} imageUrl={''} details={''} name={''} price={0} quantity={1} />
             </div>
             <div className="mb-2">
-              <CartDrawerItem id={0} imageUrl={''} details={''} name={''} price={0} quantity={1} />
+              <CartDrawerItem id={0} imageUrl={''} details={''} name={''} price=
+              {0} quantity={1} />
             </div>
           </div>
 
