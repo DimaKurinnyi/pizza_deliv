@@ -1,5 +1,6 @@
 import { cartDTO } from '../services/dto/cart.dto';
 import { CartStateItem } from '../store/cart';
+import { calcCartItemTotalPrice } from './calc-cart-item-total-price';
 
 interface ReturnProps {
   items: CartStateItem[];
@@ -11,7 +12,7 @@ export const getCartDetails = (data: cartDTO): ReturnProps => {
     id: item.id,
     quantity: item.quantity,
     name: item.productItem.product.name,
-    price: item.productItem.product.price,
+    price: calcCartItemTotalPrice(item),
     imageUrl: item.productItem.product.imageUrl,
     pizzaSize: item.productItem.size,
     pizzaType: item.productItem.pizzaType,
@@ -19,11 +20,10 @@ export const getCartDetails = (data: cartDTO): ReturnProps => {
       name: ingredient.name,
       price: ingredient.price,
     })),
-  }));
+  }))as CartStateItem[];
 
-  return{
+  return {
     items,
     totalAmount: data.totalAmount,
-  }
-  
+  };
 };

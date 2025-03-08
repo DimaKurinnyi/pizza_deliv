@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { Api } from '../services/appi-client';
 import { getCartDetails } from '../lib/get-cart-ditails';
+import { Api } from '../services/appi-client';
 
 export type CartStateItem = {
   id: number;
@@ -40,18 +40,27 @@ export const useCartStore = create<CartState>((set, get) => ({
   fetchCartItems: async () => {
     try {
       set({ loading: true, error: false });
-      const data = await Api.cart.fetchCart()
-      set(getCartDetails(data))
+      const data = await Api.cart.fetchCart();
+      set(getCartDetails(data));
     } catch (error) {
-        console.log(error)
-     set({error:true})
+      console.error(error);
+      set({ error: true });
     } finally {
-        set({ loading: false });
+      set({ loading: false });
     }
   },
-  removeCartItem:async(id:number)=>{},
-  updateItemQuantity: async(id:number, quantity:number)=>{},
-  addCartItem: async(values: any)=>{},
-
-
+  removeCartItem: async (id: number) => {},
+  updateItemQuantity: async (id: number, quantity: number) => {
+    try {
+      set({ loading: true, error: false });
+      const data = await Api.cart.updateItemQuantity(id, quantity);
+      set(getCartDetails(data));
+    } catch (error) {
+      console.error(error);
+      set({ error: true });
+    } finally {
+      set({ loading: false });
+    }
+  },
+  addCartItem: async (values: any) => {},
 }));
