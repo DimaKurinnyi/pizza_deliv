@@ -7,12 +7,13 @@ import { CountButton } from './count-button';
 
 interface Props extends CartItemProps {
   onClickCountButton?: (type: 'plus' | 'minus') => void;
+  onClickRemove?: () => void;
   className?: string;
 }
 
 export const CartDrawerItem: React.FC<Props> = ({
   className,
-  id,
+  onClickRemove,
   imageUrl,
   name,
   price,
@@ -31,6 +32,7 @@ export const CartDrawerItem: React.FC<Props> = ({
           <div className="flex items-center gap-3">
             <CartItem.Price value={price} />
             <Trash2Icon
+            onClick={onClickRemove}
               className="text-gray-400 cursor-pointer hover:text-gray-600"
               size={16}
             />
