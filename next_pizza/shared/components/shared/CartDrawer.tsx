@@ -16,7 +16,9 @@ interface Props {
 export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ className, children }) => {
   const fetchCartItems = useCartStore((state) => state.fetchCartItems);
   const updateItemQuantity = useCartStore((state) => state.updateItemQuantity);
+  const removeCartItem = useCartStore((state) => state.removeCartItem);
   const items = useCartStore((state) => state.items);
+  const totalAmount = useCartStore((state) => state.totalAmount);
 
   useEffect(() => {
     fetchCartItems();
@@ -48,6 +50,7 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ className
                   price={item.price}
                   quantity={item.quantity}
                   onClickCountButton={(type) => onClickCountButton(item.id, item.quantity, type)}
+                  onClickRemove={() => removeCartItem(item.id)}
                 />
               ))}
             </div>
@@ -60,7 +63,7 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ className
                   Total
                   <div className="flex flex-1 border-b border-dashed border-b-neutral-200 relative -top-1 mx-2 "></div>
                 </span>
-                <span className="font-bold text-lg">100£</span>
+                <span className="font-bold text-lg">{totalAmount}$</span>
               </div>
               <Link href="/cart">
                 <Button type="submit" className="w-full h-12 text-base">
