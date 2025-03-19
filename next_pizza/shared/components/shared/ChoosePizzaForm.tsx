@@ -18,32 +18,19 @@ interface Props {
   name: string;
   ingredients: Ingredient[];
   items: ProductItem[];
-  onClickAddCart?: VoidFunction;
+  onSubmit: (itemId: number, ingredients: number[]) => void;
   className?: string;
 }
 
-export const ChoosePizzaForm: React.FC<Props> = ({
-  className,
-  name,
-  items,
-  imageUrl,
-  onClickAddCart,
-  ingredients,
-}) => {
-  const { size, setSize, type, setType, selectedIngredients, addIngredient, availableSizes } =
-    usePizzaOptionals(items);
+export const ChoosePizzaForm: React.FC<Props> = ({ className, name, items, imageUrl, onSubmit, ingredients }) => {
+  const { size, setSize, type, setType, selectedIngredients, addIngredient, availableSizes, currentItemId } = usePizzaOptionals(items);
 
-  const { textDetails, totalPrice } = getPizzaDetail(
-    items,
-    ingredients,
-    selectedIngredients,
-    type,
-    size,
-  );
+  const { textDetails, totalPrice } = getPizzaDetail(items, ingredients, selectedIngredients, type, size);
 
   const handleClickAdd = () => {
-    onClickAddCart?.();
-    console.log({ size, type, ingredients: selectedIngredients });
+    if (currentItemId) {
+      onSubmit(currentItemId, Array.from(selectedIngredients));
+    }
   };
 
   return (
@@ -52,26 +39,11 @@ export const ChoosePizzaForm: React.FC<Props> = ({
       <div className="flex flex-col w-[490px] gap-5 p-7 bg-[#f7f6f5]">
         <Title text={name} size="md" className="font-extrabold mb-1" />
         <p className="text-gray-400">{textDetails}</p>
-        <GroupeVariant
-          items={availableSizes}
-          value={String(size)}
-          onClick={(value) => setSize(Number(value) as PizzaSize)}
-        />
-        <GroupeVariant
-          items={PizzaType}
-          value={String(type)}
-          onClick={(value) => setType(Number(value) as PizzaType)}
-        />
+        <GroupeVariant items={availableSizes} value={String(size)} onClick={(value) => setSize(Number(value) as PizzaSize)} />
+        <GroupeVariant items={PizzaType} value={String(type)} onClick={(value) => setType(Number(value) as PizzaType)} />
         <div className="grid grid-cols-3 gap-3">
           {ingredients.map((item, index) => (
-            <IngredientItem
-              key={index}
-              imageUrl={item.imageUrl}
-              name={item.name}
-              price={item.price}
-              onClick={() => addIngredient(item.id)}
-              active={selectedIngredients.has(item.id)}
-            />
+            <IngredientItem key={index} imageUrl={item.imageUrl} name={item.name} price={item.price} onClick={() => addIngredient(item.id)} active={selectedIngredients.has(item.id)} />
           ))}
         </div>
         <Button onClick={handleClickAdd} className="h-[55px] px-10 text-base rounded-[18px] w-full">
