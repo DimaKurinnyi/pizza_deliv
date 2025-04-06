@@ -6,11 +6,12 @@ import React, { useEffect, useRef } from 'react';
 import { useIntersection } from 'react-use'; //для скрола по категориям
 import { ProductCard } from './ProductCard';
 import { Title } from './title';
+import { ProductWithRelations } from '@/@types/prisma';
 
 interface Props {
   title: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  items: any[];
+  items: ProductWithRelations[];
   categoryId: number;
   className?: string;
   listClassName?: string;
@@ -45,6 +46,7 @@ export const ProductsGroupList: React.FC<Props> = ({
             name={product.name}
             imageUrl={product.imageUrl}
             price={product.items[0].price}
+            ingredients={product.ingredients}
           />
         ))}
       </div>
