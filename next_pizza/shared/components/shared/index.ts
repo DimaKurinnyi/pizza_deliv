@@ -14,3 +14,6 @@ export { Title } from './title';
 export { TopBar } from './top-bar';
 export {CartButton} from './CartButton'
 export {CartDrawer} from './CartDrawer';
+export {ProductForm} from './ProductForm';
+export { WhiteBlock } from './WhiteBlock';
+export { CheckoutItemDetails } from './CheckoutItemDetails';

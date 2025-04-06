@@ -1,17 +1,10 @@
-import { prisma } from '@/prisma/prisma-client';
-import { Container, Filters, ProductsGroupList, Title, TopBar } from '@/shared/components/shared';
 
-export default async function Home() {
-  const category = await prisma.category.findMany({
-    include: {
-      products: {
-        include: {
-          items: true,
-          ingredients: true,
-        },
-      },
-    },
-  });
+import { Container, Filters, ProductsGroupList, Title, TopBar } from '@/shared/components/shared';
+import { findPizzas, GetSearchParams } from '@/shared/lib/find-pizzas';
+import { Suspense } from 'react';
+
+export default async function Home({searchParams}:{searchParams:GetSearchParams}) {
+  const category = await findPizzas(searchParams)
   return (
     <>
       <Container className="mt-10">
@@ -22,22 +15,14 @@ export default async function Home() {
         <div className="flex gap-[60px]">
           {/* filter */}
           <div className="w-[250px]">
-            <Filters />
+            <Suspense>
+              <Filters />
+            </Suspense>
           </div>
           {/* Pizza cards */}
           <div className="flex-1">
             <div className="flex flex-col gap-16">
-              {category.map(
-                (category) =>
-                  category.products.length > 0 && (
-                    <ProductsGroupList
-                      key={category.id}
-                      title={category.name}
-                      categoryId={category.id}
-                      items={category.products}
-                    />
-                  ),
-              )}
+              {category.map((category) => category.products.length > 0 && <ProductsGroupList key={category.id} title={category.name} categoryId={category.id} items={category.products} />)}
             </div>
           </div>
         </div>

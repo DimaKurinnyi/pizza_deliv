@@ -1,5 +1,5 @@
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSet } from 'react-use';
 
 export interface QueryFilters extends PriceProps {
@@ -51,7 +51,7 @@ export const useFilters = (): ReturnProps => {
     }));
   };
 
-  return {
+  return useMemo(()=>({
     sizes,
     type,
     selectedIngredients,
@@ -60,5 +60,5 @@ export const useFilters = (): ReturnProps => {
     setPizzaTypes: toggleType,
     setSizes: toggleSizes,
     setSelectedIngredients: toggleIngredients,
-  };
+  }),[price, selectedIngredients, sizes, toggleIngredients, toggleSizes, toggleType, type]);
 };

@@ -1,21 +1,30 @@
 import { prisma } from '@/prisma/prisma-client';
-import { Container, ProductImg, Title } from '@/shared/components/shared';
+import { Container, ProductForm } from '@/shared/components/shared';
 import { notFound } from 'next/navigation';
 
 export default async function ProductPage({ params: { id } }: { params: { id: string } }) {
-  const product = await prisma.product.findFirst({ where: { id: Number(id) } });
+  const product = await prisma.product.findFirst({
+    where: { id: Number(id) },
+    include: {
+      ingredients: true,
+      category: {
+        include: {
+          products: {
+            include: {
+              items: true,
+            },
+          },
+        },
+      },
+      items: true,
+    },
+  });
 
   if (!product) return notFound();
+
   return (
     <Container className="flex flex-col my-10">
-      <div className="flex flex-1">
-        <ProductImg size={30} imageUrl={product.imageUrl} />
-        <div className="w-[490px] bg-[#FCFCFC] p-7">
-          <Title text={product.name} size="md" className="font-extrabold mb-1" />
-          <div className="text-gray-400">unjdbjkvn djkfv kdbfvkbndfjkv</div>
-          {/* <GroupeVariant/> */}
-        </div>
-      </div>
+      <ProductForm product={product} />
     </Container>
   );
 }
