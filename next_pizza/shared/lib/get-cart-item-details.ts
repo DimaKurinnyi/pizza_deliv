@@ -1,8 +1,7 @@
-
 import { mapPizzaType, PizzaSize, PizzaType } from '../constants/pizza';
 import { CartStateItem } from '../store/cart';
 
-export const getCartItemDetails = (pizzaType: PizzaType | null, pizzaSize: PizzaSize | null, ingredients: CartStateItem['ingredients']): string => {
+export const getCartItemDetails = (ingredients: CartStateItem['ingredients'], pizzaType?: PizzaType | null, pizzaSize?: PizzaSize | null): string => {
   const details = [];
   if (pizzaSize && pizzaType) {
     const typeName = mapPizzaType[pizzaType];

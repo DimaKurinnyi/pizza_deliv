@@ -1,12 +1,14 @@
+'use client';
 import { cn } from '@/shared/lib/utils';
-import {  User } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
-import { Button } from '../ui';
-import { Container } from './Container';
-import { SearchInput } from './SearchInput';
+import React, { useState } from 'react';
 import { CartButton } from './CartButton';
+import { Container } from './Container';
+import { ProfileButton } from './ProfileButton';
+import { SearchInput } from './SearchInput';
+import { AuthModal } from './modals/auth-modal/AuthModal';
 
 interface Props {
   hasCart?: boolean;
@@ -14,7 +16,11 @@ interface Props {
   className?: string;
 }
 
-export const Header: React.FC<Props> = ({ className,hasSearch = true,hasCart= true }) => {
+export const Header: React.FC<Props> = ({ className, hasSearch = true, hasCart = true }) => {
+  const [openAuthModal, setOpenAuthModal] = useState(false);
+  const session = useSession();
+
+  console.log('Session:', session);
   return (
     <div className={cn('border border-b', className)}>
       <Container className="flex items-center justify-between py-8">
@@ -28,17 +34,17 @@ export const Header: React.FC<Props> = ({ className,hasSearch = true,hasCart= tr
             </div>
           </div>
         </Link>
-       {hasSearch && <div className="mx-10 flex-1">
-          <SearchInput />
-        </div>}
+        {hasSearch && (
+          <div className="mx-10 flex-1">
+            <SearchInput />
+          </div>
+        )}
 
         {/* right side */}
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="flex items-center gap-3">
-            <User size={16} />
-            Login
-          </Button>
-          {hasCart && <CartButton/>}
+          <AuthModal open={openAuthModal} onClose={() => setOpenAuthModal(false)} />
+          <ProfileButton  onClickSignIn={() => setOpenAuthModal(true)}/>
+          {hasCart && <CartButton />}
         </div>
       </Container>
     </div>
