@@ -11,10 +11,10 @@ import { Payments } from './strupe-payment/Payments';
 import convertToSubcurrency from '@/shared/lib/convertToSubcurrency';
 import { TCheckoutFormValues } from './checkout/checkout-form-schema';
 
-if(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY === undefined) {
-  throw new Error('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not defined')}
+// if(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY === undefined) {
+//   throw new Error('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not defined')}
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+// const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 
 interface Props {
   totalPrice: number;
