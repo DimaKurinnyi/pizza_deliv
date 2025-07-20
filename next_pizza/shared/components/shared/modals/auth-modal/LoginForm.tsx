@@ -24,7 +24,7 @@ export const LoginForm: React.FC<Props> = ({ onClose }) => {
   const onSubmit = async (data: TLoginFormValues) => {
     try {
       const resp = await signIn('credentials', { ...data, redirect: false });
-      if (resp?.ok) {
+      if (!resp?.ok) {
         return toast.error('Login failed. Please try again.');
       }
       onClose?.();

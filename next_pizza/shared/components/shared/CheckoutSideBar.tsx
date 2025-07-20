@@ -5,7 +5,7 @@ import { Button } from '../ui';
 import { Skeleton } from '../ui/skeleton';
 import { CheckoutItemDetails } from './CheckoutItemDetails';
 import { WhiteBlock } from './WhiteBlock';
-import { loadStripe } from '@stripe/stripe-js';
+// import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { Payments } from './strupe-payment/Payments';
 import convertToSubcurrency from '@/shared/lib/convertToSubcurrency';

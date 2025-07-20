@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const passwordSchema = z.string().min(6, 'Password must be at least 6 characters long');
+export const passwordSchema = z.string().min(3, 'Password must be at least 6 characters long');
 
 export const FormLoginSchema = z.object({
   email: z.string().email('Invalid email address'),
