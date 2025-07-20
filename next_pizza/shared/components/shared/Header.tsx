@@ -43,7 +43,7 @@ export const Header: React.FC<Props> = ({ className, hasSearch = true, hasCart =
         {/* right side */}
         <div className="flex items-center gap-3">
           <AuthModal open={openAuthModal} onClose={() => setOpenAuthModal(false)} />
-          <ProfileButton  onClickSignIn={() => setOpenAuthModal(true)}/>
+          <ProfileButton onClickSignIn={() => setOpenAuthModal(true)} />
           {hasCart && <CartButton />}
         </div>
       </Container>
