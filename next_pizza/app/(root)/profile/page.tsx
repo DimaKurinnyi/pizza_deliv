@@ -1,4 +1,5 @@
 import { prisma } from '@/prisma/prisma-client';
+import { ProfileForm } from '@/shared/components/shared';
 import { getUserSession } from '@/shared/lib/get-user-session';
 import { redirect } from 'next/navigation';
 
@@ -9,5 +10,9 @@ export default async function ProfilePage() {
     return redirect('/not-auth');
   }
   const user = await prisma.user.findFirst({ where: { id: Number(session.id) } });
-  return <ProfileForm user={user} />;
+  if (!user) {
+    // You can redirect, throw, or render a fallback UI here
+    return redirect('/not-auth');
+  }
+  return <ProfileForm data={user} />;
 }

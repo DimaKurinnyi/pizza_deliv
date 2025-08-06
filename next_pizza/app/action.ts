@@ -4,9 +4,11 @@ import { prisma } from '@/prisma/prisma-client';
 import { TCheckoutFormValues } from '@/shared/components/shared/checkout/checkout-form-schema';
 import { OrderSuccessTemplate } from '@/shared/components/shared/resend-email/OrderSuccessTemplate';
 import { PayOrderTemplate } from '@/shared/components/shared/resend-email/PayOrderTemplate';
+import { getUserSession } from '@/shared/lib/get-user-session';
 import { sendEmail } from '@/shared/lib/send-email';
 import { CartItemDTO } from '@/shared/services/dto/cart.dto';
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus, Prisma } from '@prisma/client';
+import { hashSync } from 'bcrypt';
 import { cookies } from 'next/headers';
 
 export async function createOrder(data: TCheckoutFormValues) {
@@ -74,7 +76,7 @@ export async function createOrder(data: TCheckoutFormValues) {
         cartId: userCart.id,
       },
     });
- 
+
     // re_VdffvT6e_Dvsn5Rih2FYiRd9NeTpLAmmD
 
     await sendEmail(
@@ -86,7 +88,7 @@ export async function createOrder(data: TCheckoutFormValues) {
         paymentUrl: 'https://resend.com/onboarding',
       }),
     );
-    
+
     return order.id;
   } catch (error) {
     console.log(error);
@@ -94,33 +96,85 @@ export async function createOrder(data: TCheckoutFormValues) {
   }
 }
 
-export async function newStatus ( order_id: string, redirect_status: string )  {
-      
-      const order = await prisma.order.findFirst({
-        where: {
-          id: Number(order_id),
-        },
-      });
+export async function newStatus(order_id: string, redirect_status: string) {
+  const order = await prisma.order.findFirst({
+    where: {
+      id: Number(order_id),
+    },
+  });
 
-      if (!order) {
-        return;
+  if (!order) {
+    return;
+  }
+  const isSucceeded = redirect_status === 'succeeded';
+
+  await prisma.order.update({
+    where: {
+      id: order?.id,
+    },
+    data: {
+      status: isSucceeded ? OrderStatus.SUCCEDED : OrderStatus.CANSELLED,
+    },
+  });
+
+  const items = JSON.parse(order?.items as string) as CartItemDTO[];
+  if (isSucceeded) {
+    await sendEmail(order?.email || '', 'Next Pizza / Ваш заказ успешно оформлен 🎉', OrderSuccessTemplate({ orderId: order.id, items }));
+  } else {
+    // Письмо о неуспешной оплате
+  }
+}
+
+export async function UpdateUserInfo(body: Prisma.UserUpdateInput) {
+  try {
+    const currentUser = await getUserSession();
+    if (!currentUser) {
+      throw new Error('User not found');
+    }
+    const user = await prisma.user.findFirst({
+      where: {
+        id: Number(currentUser.id),
+      },
+    });
+    await prisma.user.update({
+      where: {
+        id: Number(currentUser.id),
+      },
+      data: {
+        fullName: body.fullName,
+        email: body.email,
+        password: body.password ? hashSync(body.password as string, 10) : user?.password,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error('Error updating user info');
+  }
+}
+
+export async function registerUser(body: Prisma.UserCreateInput) {
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        email: body.email,
+      },
+    });
+    if (user) {
+      if (!user.verified) {
+        throw new Error('User with this email already exists, but not verified');
       }
-      const isSucceeded = redirect_status === 'succeeded';
+      throw new Error('User with this email already exists');
+    }
 
-      await prisma.order.update({
-        where: {
-          id: order?.id,
-        },
-        data: {
-          status: isSucceeded ? OrderStatus.SUCCEDED : OrderStatus.CANSELLED,
-        },
-      });
-
-      const items = JSON.parse(order?.items as string) as CartItemDTO[];
-      if (isSucceeded) {
-        await sendEmail(order?.email || '', 'Next Pizza / Ваш заказ успешно оформлен 🎉', OrderSuccessTemplate({ orderId: order.id, items }));
-      } else {
-        // Письмо о неуспешной оплате
-      }
-    };
-
+    const createdUser = await prisma.user.create({
+      data: {
+        email: body.email,
+        fullName: body.fullName,
+        password: hashSync(body.password, 10),
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error('Error registering user');
+  }
+}

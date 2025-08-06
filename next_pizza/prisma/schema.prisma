@@ -13,7 +13,7 @@ model User {
     password String
     fullName String
     role     UserRole @default(USER)
-    verified DateTime
+    verified DateTime?
 
     provider   String?
     providerId String?
