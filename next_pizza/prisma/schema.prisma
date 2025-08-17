@@ -142,6 +142,7 @@ model VerificationCode {
     user   User   @relation(fields: [userId], references: [id])
 
     createdAt DateTime @default(now())
+    @@unique([userId,code])
 }
 
 enum OrderStatus {

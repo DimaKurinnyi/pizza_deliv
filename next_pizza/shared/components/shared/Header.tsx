@@ -3,7 +3,9 @@ import { cn } from '@/shared/lib/utils';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { CartButton } from './CartButton';
 import { Container } from './Container';
 import { ProfileButton } from './ProfileButton';
@@ -18,9 +20,30 @@ interface Props {
 
 export const Header: React.FC<Props> = ({ className, hasSearch = true, hasCart = true }) => {
   const [openAuthModal, setOpenAuthModal] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const session = useSession();
 
   console.log('Session:', session);
+  useEffect(() => {
+    if (searchParams.has('paid')) {
+      setTimeout(() => {
+        toast.success('Payment successful! Your order is being processed.');
+        router.replace('/');
+      }, 500);
+    }
+    if (searchParams.has('verified')) {
+      setTimeout(() => {
+        toast.success('Payment successful! Your order is being processed.');
+        router.replace('/');
+      }, 500);
+    }
+  }, [router, searchParams]);
+
+  if (session.status === 'loading') {
+    return <div className="h-16 w-full bg-white animate-pulse" />;
+  }
+
   return (
     <div className={cn('border border-b', className)}>
       <Container className="flex items-center justify-between py-8">

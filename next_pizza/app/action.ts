@@ -4,6 +4,7 @@ import { prisma } from '@/prisma/prisma-client';
 import { TCheckoutFormValues } from '@/shared/components/shared/checkout/checkout-form-schema';
 import { OrderSuccessTemplate } from '@/shared/components/shared/resend-email/OrderSuccessTemplate';
 import { PayOrderTemplate } from '@/shared/components/shared/resend-email/PayOrderTemplate';
+import { VerificationUserTemplate } from '@/shared/components/shared/resend-email/verification-user';
 import { getUserSession } from '@/shared/lib/get-user-session';
 import { sendEmail } from '@/shared/lib/send-email';
 import { CartItemDTO } from '@/shared/services/dto/cart.dto';
@@ -173,6 +174,15 @@ export async function registerUser(body: Prisma.UserCreateInput) {
         password: hashSync(body.password, 10),
       },
     });
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    await prisma.verificationCode.create({
+      data: {
+        userId: createdUser.id,
+        code,
+      },
+    });
+    await sendEmail(createdUser.email, 'Next Pizza / Confirm registration', VerificationUserTemplate({ code }));
   } catch (error) {
     console.log(error);
     throw new Error('Error registering user');

@@ -1,4 +1,3 @@
-
 'use client';
 import { CheckoutSideBar, Container, Title } from '@/shared/components/shared';
 import { checkoutFormSchema, TCheckoutFormValues } from '@/shared/components/shared/checkout/checkout-form-schema';
@@ -7,8 +6,10 @@ import { CheckoutAddressForm } from '@/shared/components/shared/checkout/checkou
 import { CheckoutCart } from '@/shared/components/shared/checkout/checkoutCart';
 import { CheckoutPersonalForm } from '@/shared/components/shared/checkout/checkoutPersonalForm';
 import { useCart } from '@/shared/hooks/use-cart';
+import { Api } from '@/shared/services/appi-client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
@@ -17,6 +18,7 @@ const VAT = 15;
 const DELIVERY_COST = 5;
 
 const Checkout = () => {
+  const session = useSession();
   const [openPayment, setOpenPayment] = useState(false);
 
   const [data, setData] = useState<TCheckoutFormValues>();
@@ -31,6 +33,19 @@ const Checkout = () => {
       comment: '',
     },
   });
+
+  useEffect(() => {
+    async function fetchUserInfo() {
+      const data = await Api.auth.getMe();
+      const [firstName, lastName] = data.fullName.split(' ');
+      form.setValue('firstName', firstName);
+      form.setValue('lastName', lastName);
+      form.setValue('email', data.email);
+    }
+    if (session) {
+      fetchUserInfo();
+    }
+  }, [form, session]);
 
   const { removeCartItem, items, totalAmount, updateItemQuantity, loading } = useCart();
   const vatPrice = (totalAmount * VAT) / 100;
@@ -73,7 +88,6 @@ const Checkout = () => {
           </div>
         </form>
       </FormProvider>
-
     </Container>
   );
 };
